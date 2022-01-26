@@ -59,19 +59,18 @@ function Titulo(props){
 // export default HomePage
 
 export default function PaginaInicial() {
-const username = 'peas';
+const username = 'LariFreire';
 
 return (
     <>
-    <GlobalStyle />
-    <Box
-        styleSheet={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
-        backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
-        }}
-    >
+        <GlobalStyle />
+        <Box
+            styleSheet={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/09/toy-story-andys-room-wallpaper-1536x864.jpeg)',
+            backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+            }}
+        >
         <Box
         styleSheet={{
             display: 'flex',
@@ -95,33 +94,33 @@ return (
             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
             }}
         >
-            <Titulo tag="h2">Boas vindas de volta!</Titulo>
-            <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
-            {appConfig.name}
-            </Text>
+        <Titulo tag="h2">Boas vindas de volta!</Titulo>
+        <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
+        {appConfig.name}
+        </Text>
 
-            <TextField
-            fullWidth
-            textFieldColors={{
-                neutral: {
-                textColor: appConfig.theme.colors.neutrals[200],
-                mainColor: appConfig.theme.colors.neutrals[900],
-                mainColorHighlight: appConfig.theme.colors.primary[500],
-                backgroundColor: appConfig.theme.colors.neutrals[800],
-                },
-            }}
-            />
-            <Button
-            type='submit'
-            label='Entrar'
-            fullWidth
-            buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.primary[500],
-                mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[600],
-            }}
-            />
+        <TextField
+        fullWidth
+        textFieldColors={{
+            neutral: {
+            textColor: appConfig.theme.colors.neutrals[200],
+            mainColor: appConfig.theme.colors.neutrals[900],
+            mainColorHighlight: appConfig.theme.colors.primary[500],
+            backgroundColor: appConfig.theme.colors.neutrals[800],
+            },
+        }}
+        />
+        <Button
+        type='submit'
+        label='Entrar'
+        fullWidth
+        buttonColors={{
+            contrastColor: appConfig.theme.colors.neutrals["000"],
+            mainColor: appConfig.theme.colors.primary[500],
+            mainColorLight: appConfig.theme.colors.primary[400],
+            mainColorStrong: appConfig.theme.colors.primary[600],
+        }}
+        />
         </Box>
         {/* Formulário */}
 
@@ -134,9 +133,9 @@ return (
             alignItems: 'center',
             maxWidth: '200px',
             padding: '16px',
-            backgroundColor: appConfig.theme.colors.neutrals[800],
+            backgroundColor: appConfig.theme.colors.neutrals[600],
             border: '1px solid',
-            borderColor: appConfig.theme.colors.neutrals[999],
+            borderColor: appConfig.theme.colors.primary[500],
             borderRadius: '10px',
             flex: 1,
             minHeight: '240px',
