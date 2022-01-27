@@ -1,34 +1,11 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import appConfig from '../config.json'
-
-function GlobalStyle(){
-    return (
-        <style global jsx>{`
-            * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            list-style: none;
-            }
-            body {
-                font-family: 'Open Sans', sans-serif;
-            }
-            /* App fit Height */ 
-            html, body, #__next {
-                min-height: 100vh;
-                display: flex;
-                flex: 1;
-            }
-            #__next {
-                flex: 1;
-            }
-            #__next > * {
-                flex: 1;
-            }
-            /* ./App fit Height */ 
-        `}</style>
-    );
-}
+import appConfig from '../config.json';
+import {useRouter} from 'next/router';
+import React from 'react';
+import {useState, useEffect } from 'react';
+import defaultImage from '../img/jessie.png';
+import backgroundHome from '../img/toy-story-room-wallpaper.jpeg';
+import { SiGithub } from 'react-icons/si';
 
 function Titulo(props){
     const Tag = props.tag || "h1";
@@ -59,15 +36,22 @@ function Titulo(props){
 // export default HomePage
 
 export default function PaginaInicial() {
-const username = 'LariFreire';
+//const username = 'LariFreire';
+const [username, setUsername] = useState('');
+const user = username.length > 2 ? username : '';
+const [name, setName] = useState('');
+const root = useRouter();
+
+useEffect (()=>{
+    user ? fetch(`https://api.github.com/users/${user}`).then(response => response.json()).then(data => setName(data.name)) : setName('');
+},[username])
 
 return (
     <>
-        <GlobalStyle />
         <Box
             styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/09/toy-story-andys-room-wallpaper-1536x864.jpeg)',
+            backgroundImage: `url(${backgroundHome.src})`,
             backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
             }}
         >
@@ -89,6 +73,14 @@ return (
         {/* Formulário */}
         <Box
             as="form"
+            onSubmit={function(e){
+                e.preventDefault();
+                //if(validUser)
+                    root.push('/chat');
+                //else
+                //    alert('Nome de usuário inválido!')
+                //window.location.href = '/chat';
+            }}
             styleSheet={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -98,8 +90,28 @@ return (
         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
         {appConfig.name}
         </Text>
+        {/* <input
+            type="text"
+            value={username}
+            onChange={function handler(event){
+                //Onde tá o valor?
+                const valor = event.target.value;
+                //Trocar o valor da veriável
+                setUsername (valor);
 
+            }}
+        ></input> */}
         <TextField
+            placeholder='Insira o user do GitHub'
+            value={username}
+            onChange={function handler(event){
+                //Onde tá o valor?
+                const valor = event.target.value;
+                //Trocar o valor da veriável
+                setUsername (valor);
+                user ? fetch(`https://api.github.com/users/${user}`).then(response => response.json()).then(data => setName(data.name)) : setName('');
+
+            }}
         fullWidth
         textFieldColors={{
             neutral: {
@@ -109,7 +121,7 @@ return (
             backgroundColor: appConfig.theme.colors.neutrals[800],
             },
         }}
-        />
+        /> 
         <Button
         type='submit'
         label='Entrar'
@@ -120,6 +132,7 @@ return (
             mainColorLight: appConfig.theme.colors.primary[400],
             mainColorStrong: appConfig.theme.colors.primary[600],
         }}
+        disabled={user ? false : true}
         />
         </Box>
         {/* Formulário */}
@@ -146,7 +159,7 @@ return (
                 borderRadius: '50%',
                 marginBottom: '16px',
             }}
-            src={`https://github.com/${username}.png`}
+            src={user ? `https://github.com/${user}.png` : defaultImage.src}
             />
             <Text
             variant="body4"
@@ -157,7 +170,8 @@ return (
                 borderRadius: '1000px'
             }}
             >
-            {username}
+            
+            {!user ? '. . .' : name ? name : user}
             </Text>
         </Box>
         {/* Photo Area */}
