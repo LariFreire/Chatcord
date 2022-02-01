@@ -4,7 +4,7 @@ import {useRouter} from 'next/router';
 import React from 'react';
 import {useState, useEffect } from 'react';
 import defaultImage from '../img/jessie.png';
-import backgroundHome from '../img/toy-story-room-wallpaper.jpeg';
+import background from '../img/toy-story-room-wallpaper.jpeg';
 import { SiGithub } from 'react-icons/si';
 
 function Titulo(props){
@@ -51,7 +51,7 @@ return (
         <Box
             styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backgroundImage: `url(${backgroundHome.src})`,
+            backgroundImage: `url(${background.src})`,
             backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
             }}
         >
