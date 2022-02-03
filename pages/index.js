@@ -76,7 +76,7 @@ return (
             onSubmit={function(e){
                 e.preventDefault();
                 //if(validUser)
-                    root.push('/chat');
+                    root.push(`/chat?username=${user}`);
                 //else
                 //    alert('Nome de usuário inválido!')
                 //window.location.href = '/chat';

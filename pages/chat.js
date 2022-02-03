@@ -2,33 +2,69 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 import background from '../img/toy-story-room-wallpaper.jpeg';
-import { createClient } from '@supabase/supabase-js'
+import del from '../img/delete.png';
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from '../src/components/ButtonSendStiker'
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzY1MDg1NSwiZXhwIjoxOTU5MjI2ODU1fQ.SyqOCZ-ZRayVpaKTuXcXcZWF_A-Ml3aRJrPdjQ_Iols'
 const SUPABASE_URL = 'https://xycbvdkjdfzdxwmikqlt.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaEmTempoReal(adicionaMensagem){
+    return supabaseClient
+        .from('mensagens')
+        .on('INSERT', (msgLive)=>{
+            adicionaMensagem(msgLive.new);
+        })
+        .subscribe();
+}
+
 export default function ChatPage() {
-    // Sua lógica vai aqui
+    const root = useRouter();
+    const usuarioLogado = root.query.username;
     const [message, setMessage] = React.useState('');
     const [messageList, setMessageList] = React.useState([]);
-    // ./Sua lógica vai aqui
-    
+
+
     React.useEffect(() => {
         supabaseClient
             .from('mensagens')
             .select('*')
-            .order('id', {ascending:false})
-            .then(({data}) => {
-                console.log("Dados da consulta: ", data);
+            .order('id', { ascending: false })
+            .then(({ data }) => {
+                //console.log("Dados da consulta: ", data);
                 setMessageList(data);
             })
+            
+            escutaEmTempoReal((novaMensagem)=>{
+                //reusar um valor de referência (objeto/array) passsar função para o setState
+                setMessageList((valorAtualDaLista)=>{
+                    return[
+                        novaMensagem,
+                        ...valorAtualDaLista,
+                    ]
+                });
+            });
     }, []);
+
+    function handleDeleteMessage(antigoId){
+        supabaseClient
+            .from('mensagens')
+            .delete()
+            .match({ id: Number(antigoId) })
+            .then(({data, error}) => {
+                console.log(error);
+            })
+            setMessageList((old) => {
+            return old.filter(item => item.id !== antigoId);
+        });
+    }
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: messageList.length,
-            de: 'larifreire',
+            de: usuarioLogado,
             texto: novaMensagem,
         };
 
@@ -36,19 +72,15 @@ export default function ChatPage() {
             .from('mensagens')
             .insert([
                 //objeto com os mesmo campos do supabase
-                message
+                mensagem
             ])
-            .then(({data})=>{
-                console.log('Criando uma mensagem: ', data);
-                setMessageList([
-                    data[0],
-                    ...messageList
-                ]);
+            .then(({ data }) => {
+                //console.log('Criando uma mensagem: ', data);
             });
-            
-            setMessage('');
+
+        setMessage('');
     }
-    
+
     return (
         <Box
             styleSheet={{
@@ -85,7 +117,7 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    <MessageList mensagens={messageList} />
+                    <MessageList mensagens={messageList} onDelete={handleDeleteMessage} user={usuarioLogado}/>
                     {/* Lista de mensagens:{messageList.map((mensagem)=>{
                         return(
                             <li key={mensagem.id}>
@@ -125,15 +157,21 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
-                       <Button
+                        <ButtonSendSticker
+                            onStickerClick={(sticker) => {
+                                //console.log('Recebi o sticker: ', sticker)
+                                handleNovaMensagem(':sticker: ' + sticker);
+                            }}
+                        />
+                        <Button
                             iconName='paperPlane'
                             onClick={() => {
-                                if ( message != ''){
+                                if (message != '') {
                                     handleNovaMensagem(message);
                                 }
                             }}
                             variant='secondary'
-                            colorVariant = 'neutral'
+                            colorVariant='neutral'
 
                         />
                     </Box>
@@ -217,8 +255,41 @@ function MessageList(props) {
                             >
                                 {(new Date().toLocaleDateString())}
                             </Text>
+                            {((props.user).toLowerCase() == (mensagem.de).toLowerCase()) && <button
+                                onClick={() => {
+                                    return props.onDelete(mensagem.id);
+                                }}
+                            ><img src={del.src} width={10}/></button>}
+                            <style jsx>{`
+                                button {
+                                    background: none;
+                                    border: none;
+                                    border-radius: 2px;
+                                    float: right;
+                                }
+                                button:hover {
+                                    background-color: ${appConfig.theme.colors.neutrals[900]};
+                                    cursor: pointer;
+                                }
+                            `}</style>
                         </Box>
-                        {mensagem.texto}
+                        {/* [Declarativo] */}
+                        {/* Condicional: {mensagem.texto.startsWith(':sticker:').toString()} */}
+                        {mensagem.texto.startsWith(':sticker:')
+                            ? (
+                                <Image src={mensagem.texto.replace(':sticker:', '')} 
+                                styleSheet={{
+                                    height: '7em'
+                                }}/>
+                            )
+                            : (
+                                mensagem.texto
+                            )}
+                        {/* if mensagem de texto possui stickers:
+                           mostra a imagem
+                        else 
+                           mensagem.texto */}
+                        {/* {mensagem.texto} */}
                     </Text>
                 );
             })}
